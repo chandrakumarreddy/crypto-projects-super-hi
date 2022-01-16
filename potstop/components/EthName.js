@@ -11,6 +11,7 @@ const ens = new ENS({
 
 const EnsName = function ({ address }) {
   const [ensName, setEnsName] = useState("");
+  const [avatar, setAvatar] = useState("");
   useEffect(() => {
     async function fetchEnsName() {
       try {
@@ -29,16 +30,31 @@ const EnsName = function ({ address }) {
       fetchEnsName();
     }
   }, [address]);
+  useEffect(() => {
+    async function fetchAvatar() {
+      const n = await ens.name(ensName).getText("avatar");
+      if (n) {
+        setAvatar(n);
+      }
+    }
+    if (ensName) {
+      fetchAvatar();
+    }
+  }, [ensName]);
   const formattedAddress = `${address.substr(0, 5)}...${address.substr(-4)}`;
   return (
     <div className="eth-name">
       <div className="icon">
-        <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
+        {avatar ? (
+          <img src={avatar} alt={ensName} />
+        ) : (
+          <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
+        )}
       </div>
 
       <div className="name">
         <span className="primary">{ensName ? ensName : formattedAddress}</span>
-        <span className="secondary">{/* formatted address here */}</span>
+        <span className="secondary">{ensName ? ensName : ""}</span>
       </div>
     </div>
   );
