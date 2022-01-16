@@ -31,6 +31,20 @@ export default function Home() {
       setAccount(accounts[0]);
     }
   };
+  useEffect(() => {
+    async function fetchAccounts() {
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+      if (accounts.length > 0) {
+        setAccount(accounts[0]);
+      }
+    }
+    fetchAccounts();
+    window.ethereum.on("accountsChanged", () => {
+      setAccount("");
+    });
+  }, []);
 
   return (
     <main>
