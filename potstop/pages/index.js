@@ -22,11 +22,14 @@ import AnswerForm from "../components/AnswerForm";
 // 5. let the user post their own reply
 
 export default function Home() {
+  const [account, setAccount] = useState("");
   const connect = async () => {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
-    console.log(accounts);
+    if (accounts.length > 0) {
+      setAccount(accounts[0]);
+    }
   };
 
   return (
@@ -38,7 +41,7 @@ export default function Home() {
           <input type="text" placeholder="Search" />
         </form>
 
-        <Account connect={connect} />
+        <Account connect={connect} account={account} />
       </header>
 
       <section className="question">
