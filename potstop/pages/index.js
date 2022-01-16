@@ -44,8 +44,8 @@ export default function Home() {
       }
     }
     fetchAccounts();
-    window.ethereum.on("accountsChanged", () => {
-      setAccounts([]);
+    window.ethereum.on("accountsChanged", (e) => {
+      setAccounts(e);
     });
     async function fetchAnswers() {
       const res = await (await fetch("/api/answers")).json();
