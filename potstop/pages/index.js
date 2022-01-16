@@ -22,13 +22,16 @@ import AnswerForm from "../components/AnswerForm";
 // 5. let the user post their own reply
 
 export default function Home() {
-  const [account, setAccount] = useState("");
+  const [accounts, setAccounts] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [answers, setAnswers] = useState([]);
   const connect = async () => {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
     if (accounts.length > 0) {
-      setAccount(accounts[0]);
+      setAccounts(accounts);
     }
   };
   useEffect(() => {
@@ -37,15 +40,27 @@ export default function Home() {
         method: "eth_accounts",
       });
       if (accounts.length > 0) {
-        setAccount(accounts[0]);
+        setAccounts(accounts);
       }
     }
     fetchAccounts();
     window.ethereum.on("accountsChanged", () => {
-      setAccount("");
+      setAccounts([]);
     });
+    async function fetchAnswers() {
+      const res = await (await fetch("/api/answers")).json();
+      setAnswers(res.answers);
+      setLoading(false);
+    }
+    fetchAnswers();
   }, []);
-
+  useEffect(() => {
+    if (accounts.length > 0) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [accounts]);
   return (
     <main>
       <header>
@@ -55,7 +70,11 @@ export default function Home() {
           <input type="text" placeholder="Search" />
         </form>
 
-        <Account connect={connect} account={account} />
+        <Account
+          connect={connect}
+          accounts={accounts}
+          isLoggedIn={isLoggedIn}
+        />
       </header>
 
       <section className="question">
@@ -94,7 +113,21 @@ export default function Home() {
       </section>
 
       <section className="answers">
-        <div className="loading">Loading answers...</div>
+        {loading ? (
+          <div className="loading">Loading answers...</div>
+        ) : (
+          <>
+            {answers.map((answer, index) => (
+              <Answer
+                number={index + 1}
+                answer={answer}
+                accounts={accounts}
+                isLoggedIn={isLoggedIn}
+                key={answer.answerId}
+              />
+            ))}
+          </>
+        )}
       </section>
 
       <Head>
