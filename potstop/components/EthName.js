@@ -18,7 +18,6 @@ const EnsName = function ({ address }) {
         const n = await ens.getName(
           "0xb25bf3990c5a274a758a2a3a4cc90b3e407eaaf4"
         );
-        console.log(n);
         if (n.name) {
           setEnsName(n.name);
         }

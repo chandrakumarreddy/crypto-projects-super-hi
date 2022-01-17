@@ -49,7 +49,7 @@ export default function handler(req, res) {
         // return all good
         res
           .status(200)
-          .json({ account, reply: newReply, questionId, answerId: 3 });
+          .json({ account, reply: newReply, questionId, answerId: 4 });
       } else {
         // incorrect account
         res.status(401).json({ error: "incorrect account" });
